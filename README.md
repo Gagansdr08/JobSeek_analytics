@@ -12,3 +12,9 @@
 <h2>Problem It Solves</h2>
 <p>Job seekers often find it hard to access reliable insights about high-paying jobs and important skills, while analysts struggle to keep job data updated.</p>
 <p>This platform helps users make better career decisions and makes it easier for organizations to manage job information efficiently.</p>
+
+<h2> How to setup and run the Flask+React application</h2>
+<p> To setup and run the react files follow the following steps:</p>
+<ul>
+<li> git</li>
+</ul>

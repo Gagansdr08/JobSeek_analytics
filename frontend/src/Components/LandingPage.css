@@ -1,0 +1,89 @@
+.navbar {
+    position: fixed; /* Sticks the navbar to the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    background-color: transparent;
+    padding: 1rem 2rem; 
+    display: flex;
+    justify-content: space-between; /* Space out content */
+    align-items: center;
+    /* border-bottom: 1px solid #ddd; */
+    z-index: 1000; /* Stay above all other elements */
+    box-sizing: border-box;
+}
+
+.logo img {
+    height: 40px; /* Adjust the height of the logo */
+    max-width: 100%; /* Ensure the image doesn't exceed its container width */
+    object-fit: contain; /* Maintain aspect ratio */
+    vertical-align: middle; /* Align it vertically */}
+/* Adjusted Login/Register button */
+button {
+    padding: 6px 12px; /* Reduce padding to fit */
+    font-size: 1rem;
+    background-color: #3c009d;; /* Blue background */
+    color: white; /* White text */
+    border: line;
+    border-radius: 5px; /* Slightly rounded corners */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+button:hover {
+    background-color: #007bff; /* Darker blue on hover */
+    color:white
+
+}
+
+/* Landing page styling */
+.landing-page {
+    background: linear-gradient(60deg,#e2e8f0,#007bff);
+    height: 100vh; /* Full viewport height */
+    padding-top: 0px; /* Adjust for fixed navbar height */
+    display: flex; /* Enables flexbox for centering */
+    justify-content: center; /* Horizontally centers content */
+    align-items: center; /* Vertically centers content */
+    text-align: center; /* Centers text content */
+}
+.hero{
+    color: #fff; /* Dark gray heading */
+    margin-right: 10%;
+}
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.get-started {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    /* background-color: #007bff; 
+    color: white; /* White text */
+    border: none;
+    border-radius: 5px; /* Rounded button */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.get-started:hover {
+    background-color: #007bff; /* Darker blue on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .nav-links {
+        gap: 1rem; /* Reduce gap for smaller screens */
+    }
+
+    button {
+        padding: 6px 12px; /* Smaller padding for smaller screens */
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
+}

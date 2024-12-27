@@ -11,22 +11,22 @@ bcrypt = Bcrypt(app)  # Initialize Bcrypt for hashing passwords
 
 # Database connection details
 db_config = {
-    "dbname": "sql_course",
+    "dbname": "jobseek",
     "user": "postgres",
-    "password": "GaganPOSTGRE8+",
+    "password": "123456",
     "host": "localhost",
     "port": "5432"
 }
 
-def is_admin(user_id):
-    try:
-        with closing(psycopg2.connect(**db_config)) as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT is_admin FROM public.users WHERE user_id = %s", (user_id,))
-                user = cur.fetchone()
-                return user[0] if user else False
-    except Exception as e:
-        return False
+# def is_admin(user_id):
+#     try:
+#         with closing(psycopg2.connect(**db_config)) as conn:
+#             with conn.cursor() as cur:
+#                 cur.execute("SELECT is_admin FROM public.users WHERE user_id = %s", (user_id,))
+#                 user = cur.fetchone()
+#                 return user[0] if user else False
+#     except Exception as e:
+#         return False
 
 @app.route('/top-paying-jobs', methods=['GET'])
 def get_top_paying_jobs():
@@ -76,22 +76,97 @@ def get_top_paying_jobs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# User Registration
+# API to get dropdown options for job titles and locations
+@app.route('/dropdown-options', methods=['GET'])
+def get_dropdown_options():
+    try:
+        with closing(psycopg2.connect(**db_config)) as conn:
+            with conn.cursor() as cur:
+                # Fetch unique job titles
+                cur.execute("SELECT DISTINCT job_title_short FROM job_postings_fact ORDER BY job_title_short;")
+                job_titles = [row[0] for row in cur.fetchall()]
+
+                # Fetch unique locations
+                cur.execute("SELECT DISTINCT job_location FROM job_postings_fact ORDER BY job_location;")
+                locations = [row[0] for row in cur.fetchall()]
+
+                return jsonify({"job_titles": job_titles, "locations": locations})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# # User Registration
+# @app.route('/register', methods=['POST'])
+# def register():
+#     data = request.get_json()
+#     username = data.get('username')
+#     email = data.get('email')
+#     password = data.get('password')
+    
+#     # Ensure is_admin is treated correctly
+#     is_admin = data.get('is_admin', False)
+#     if isinstance(is_admin, str):
+#         is_admin = is_admin.lower() == 'true'
+#     elif isinstance(is_admin, bool):
+#         is_admin = is_admin
+#     else:
+#         is_admin = False  # default to False if not provided
+
+#     # Hash the password for secure storage
+#     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+#     try:
+#         with closing(psycopg2.connect(**db_config)) as conn:
+#             with conn.cursor() as cur:
+#                 # Insert the new user, ensuring unique username and email
+#                 cur.execute("""
+#                     INSERT INTO public.users (username, email, hashed_password, is_admin) 
+#                     VALUES (%s, %s, %s, %s)  -- Ensure is_admin is included
+#                     RETURNING user_id;
+#                 """, (username, email, hashed_password, is_admin))
+#                 conn.commit()
+#                 user_id = cur.fetchone()[0]
+
+#                 return jsonify({"message": "User registered successfully", "user_id": user_id}), 201
+#     except psycopg2.IntegrityError:
+#         return jsonify({"error": "Username or email already exists"}), 409
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+# # User Login
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     username = data.get('username')
+#     password = data.get('password')
+
+#     try:
+#         with closing(psycopg2.connect(**db_config)) as conn:
+#             with conn.cursor(cursor_factory=DictCursor) as cur:
+#                 # Retrieve user data based on username
+#                 cur.execute("SELECT * FROM public.users WHERE username = %s", (username,))
+#                 user = cur.fetchone()
+
+#                 # Verify password and return user information if valid
+#                 if user and bcrypt.check_password_hash(user['hashed_password'], password):
+#                     return jsonify({
+#                         "message": "Login successful",
+#                         "user_id": user['user_id'],
+#                         "is_admin": user['is_admin']  # Include admin status in response
+#                     }), 200
+#                 else:
+#                     return jsonify({"error": "Invalid username or password"}), 401
+                
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
-    
-    # Ensure is_admin is treated correctly
-    is_admin = data.get('is_admin', False)
-    if isinstance(is_admin, str):
-        is_admin = is_admin.lower() == 'true'
-    elif isinstance(is_admin, bool):
-        is_admin = is_admin
-    else:
-        is_admin = False  # default to False if not provided
+    user_type = data.get('user_type', 'user')  # Default to 'user'
 
     # Hash the password for secure storage
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -99,12 +174,12 @@ def register():
     try:
         with closing(psycopg2.connect(**db_config)) as conn:
             with conn.cursor() as cur:
-                # Insert the new user, ensuring unique username and email
+                # Insert the new user
                 cur.execute("""
-                    INSERT INTO public.users (username, email, hashed_password, is_admin) 
-                    VALUES (%s, %s, %s, %s)  -- Ensure is_admin is included
+                    INSERT INTO public.users (username, email, hashed_password, user_type) 
+                    VALUES (%s, %s, %s, %s)
                     RETURNING user_id;
-                """, (username, email, hashed_password, is_admin))
+                """, (username, email, hashed_password, user_type))
                 conn.commit()
                 user_id = cur.fetchone()[0]
 
@@ -114,7 +189,7 @@ def register():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# User Login
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -124,30 +199,105 @@ def login():
     try:
         with closing(psycopg2.connect(**db_config)) as conn:
             with conn.cursor(cursor_factory=DictCursor) as cur:
-                # Retrieve user data based on username
+                # Retrieve user data
                 cur.execute("SELECT * FROM public.users WHERE username = %s", (username,))
                 user = cur.fetchone()
 
-                # Verify password and return user information if valid
                 if user and bcrypt.check_password_hash(user['hashed_password'], password):
                     return jsonify({
                         "message": "Login successful",
                         "user_id": user['user_id'],
-                        "is_admin": user['is_admin']  # Include admin status in response
+                        "user_type": user['user_type'],  # Include user type
                     }), 200
                 else:
                     return jsonify({"error": "Invalid username or password"}), 401
-                
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/admin-dashboard', methods=['GET'])
+def admin_dashboard():
+    user_id = request.headers.get('user_id')
+    try:
+        with closing(psycopg2.connect(**db_config)) as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT user_type FROM public.users WHERE user_id = %s", (user_id,))
+                user = cur.fetchone()
+
+                if user and user[0] == 'admin':  # Check if user is an admin
+                    return jsonify({"message": "Welcome to the admin dashboard"}), 200
+                else:
+                    return jsonify({"error": "Unauthorized access"}), 403
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Admin: View Job Postings
+@app.route('/view-job-postings', methods=['GET'])
+def view_job_postings():
+    # data = request.get_json()
+    # user_id = data.get('user_id')  # Get user ID from query params
+    # job_id = data.get('job_id')    # Optional job_id filter
+    user_id = int(request.args.get('user_id'))  # Get user ID from query params and cast it to integer
+    job_id = request.args.get('job_id')    # Optional job_id filter
+    print(user_id,job_id)
+
+    # if not is_admin(user_id):
+    #     return jsonify({"error": "Unauthorized access"}), 403
+
+    try:
+        with closing(psycopg2.connect(**db_config)) as conn:
+            with conn.cursor() as cur:
+                if job_id:
+                    # Fetch a specific job posting
+                    cur.execute("""
+                        SELECT * FROM public.job_postings_fact 
+                        WHERE job_id = %s;
+                    """, (job_id,))
+                else:
+                    # Fetch all job postings created by the admin
+                    cur.execute("""
+                        SELECT * FROM public.job_postings_fact 
+                        WHERE created_by = %s;
+                    """, (user_id,))
+
+                job_postings = cur.fetchall()
+                
+                # Get column names
+                colnames = [desc[0] for desc in cur.description]
+
+                # Convert result to list of dictionaries
+                result = [dict(zip(colnames, row)) for row in job_postings]
+                # result = job_postings
+
+                return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get-last-job-id',methods=['GET'])
+def last_job_id():
+    try:
+        with closing(psycopg2.connect(**db_config)) as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT job_id FROM public.job_postings_fact ORDER BY job_id DESC LIMIT 1;")
+                last_job_id = cur.fetchone()
+                
+                if last_job_id:
+                    return jsonify({"lastJobId": last_job_id[0]})
+                else:
+                    return jsonify({"lastJobId": 0})  # If no job IDs exist, start from 0
+    except Exception as e:
+        print('Error getting last job ID:', e)
+        return jsonify({"error": str(e)}), 500
+
 
 # Admin: Add Job Posting
 @app.route('/add-job-posting', methods=['POST'])
 def add_job_posting():
     data = request.get_json()
+    print(data)
     user_id = data.get('user_id')  # Get user ID from the request
-    if not is_admin(user_id):
-        return jsonify({"error": "Unauthorized access"}), 403
+    # if not is_admin(user_id):
+        # return jsonify({"error": "Unauthorized access"}), 403
 
     job_title_short = data.get('job_title_short')
     job_title = data.get('job_title')
@@ -169,16 +319,18 @@ def add_job_posting():
 
                 return jsonify({"message": "Job posting added successfully"}), 201
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
+        
     
 
 # Admin: Update Job Posting
-@app.route('/job-posting/<int:job_id>', methods=['PUT'])
+@app.route('/update-job-posting/<int:job_id>', methods=['PUT'])
 def update_job_posting(job_id):
     data = request.get_json()
     user_id = data.get('user_id')  # Get user ID from the request
-    if not is_admin(user_id):
-        return jsonify({"error": "Unauthorized access"}), 403
+    # if not is_admin(user_id):
+    #     return jsonify({"error": "Unauthorized access"}), 403
 
     job_title_short = data.get('job_title_short')
     job_title = data.get('job_title')
@@ -203,14 +355,13 @@ def update_job_posting(job_id):
         return jsonify({"error": str(e)}), 500
     
 
-
 # Admin: Delete Job Posting
-@app.route('/job-posting/<int:job_id>', methods=['DELETE'])
+@app.route('/delete-job-posting/<int:job_id>', methods=['DELETE'])
 def delete_job_posting(job_id):
     data = request.get_json()
     user_id = data.get('user_id')  # Get user ID from the request
-    if not is_admin(user_id):
-        return jsonify({"error": "Unauthorized access"}), 403
+    # if not is_admin(user_id):
+    #     return jsonify({"error": "Unauthorized access"}), 403
 
     try:
         with closing(psycopg2.connect(**db_config)) as conn:

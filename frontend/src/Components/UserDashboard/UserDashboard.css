@@ -1,0 +1,86 @@
+.user-dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: transparent;
+    padding: 20px;
+    /* overflow-y: auto; */
+    transition: width 0.3s ease;
+  }
+  
+  .sidebar.collapsed {
+    width: 20px;
+  }
+  
+  .sidebar-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    /* margin-top: 25%; */
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .sidebar-title button {
+    font-size: 20px;
+    /* margin-bottom: 20px; */
+    margin-top: 50px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: black; /* You can use the same color as your active state */
+  }
+
+  .sidebar-title button:hover,
+  .sidebar-title button.active {
+    background-color: #3c009d;
+    color: white;
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-menu.hidden {
+    display: none; /* This class hides the sidebar menu items when the sidebar is collapsed */
+  }
+  
+  .sidebar-item {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-item:hover,
+  .sidebar-item.active {
+    background-color: #3c009d;
+    color: white;
+  }
+  
+  
+  .dashboard-content {
+    flex: 1;
+    padding: 20px;
+    /* background: linear-gradient(to right, #6dd5fa, #2980b9); */
+    color: white;
+    overflow-y: auto;
+  }
+  
+  .content {
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+  }
+  
