@@ -1,0 +1,127 @@
+/* General Reset */
+.TopPayingJobs {
+    margin: auto;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(60deg,#e2e8f0,#007bff);
+  }
+  
+  /* Navbar Styles */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent;
+    color: white;
+    padding: 10px 20px;
+    box-shadow: 0px 2px 4px rgba(21, 45, 187, 0.1);
+  }
+  
+  .navbar a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+  }
+  
+  .navbar a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Chart Container */
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Adjust height considering navbar */
+    padding: 20px;
+  }
+  
+  .chart-wrapper {
+    width: 80%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(12, 34, 178, 0.1);
+    padding: 20px;
+  }
+  
+  .chart-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Wrapper for dropdown filters */
+.dropdown-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px;
+  }
+  
+  /* Each dropdown group */
+  .dropdown-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  /* Dropdown container */
+  .custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 200px;
+  }
+  
+  /* Dropdown select box */
+  .custom-dropdown select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+    appearance: none; /* Remove default dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  /* Arrow icon for dropdown */
+  .custom-dropdown::after {
+    content: "▼";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+  }
+  
+  /* Hover effect */
+  .custom-dropdown select:hover {
+    background-color: #e6f7ff;
+    border-color: #3c009d;
+  }
+  
+  /* Focus effect */
+  /* .custom-dropdown select:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 5px rgba(24, 144, 255, 0.5);
+  } */
+  
+  /* Disabled state */
+  .custom-dropdown select:disabled {
+    background-color: #f5f5f5;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+  
